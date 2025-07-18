@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <title>My Drive</title>
+  </head>
+  <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+    <main class="min-h-screen p-4 flex flex-col items-center">
+      <!-- Header -->
+      <div class="w-full flex items-center justify-between mb-6">
+        <h1 class="text-3xl font-bold">Welcome, <%= user.username %> ! </h1>
+        <form action="/logout" method="POST">
+          <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl shadow">
+            <i class="ri-logout-box-line mr-2"></i>Logout
+          </button>
+        </form>
+      </div>
+
+      <!-- Upload Button -->
+      <button
+        onclick="showPopUp()"
+        class="mb-6 bg-blue-600 hover:bg-blue-700 transition text-white font-semibold py-3 px-6 rounded-xl shadow-lg"
+      >
+        <i class="ri-upload-cloud-2-line mr-2"></i> Upload File
+      </button>
+
+      <!-- File Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+        <% if (files.length === 0) { %>
+          <p class="col-span-full text-center text-lg text-gray-400">No files uploaded yet.</p>
+        <% } %>
+        <% files.forEach(file => { %>
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4 flex flex-col justify-between">
+            <div>
+              <h2 class="text-lg font-semibold truncate"><%= file.originalName %></h2>
+              <p class="text-sm text-gray-500 mt-1 truncate">Size: <%= (file.size / 1024).toFixed(2) %> KB</p>
+              <p class="text-sm text-gray-500 truncate">Type: <%= file.mimeType %></p>
+              <p class="text-xs text-gray-400 mt-1">Uploaded: <%= new Date(file.uploadDate).toLocaleString() %></p>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <a href="/<%= file.path %>" target="_blank" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-1.5 rounded-xl text-center">
+                <i class="ri-eye-line"></i> View
+              </a>
+              <form action="/delete-file/<%= file._id %>" method="POST" class="flex-1">
+                <button class="w-full bg-red-600 hover:bg-red-700 text-white py-1.5 rounded-xl">
+                  <i class="ri-delete-bin-line"></i> Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+
+      <!-- Upload Modal -->
+      <div class="pop hidden fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 w-full max-w-md relative animate-fade-in-up">
+          <button onclick="hidePopUp()" class="absolute top-3 right-3 text-gray-500 dark:text-gray-400 text-2xl hover:text-red-500 transition">
+            <i class="ri-close-line"></i>
+          </button>
+          <form action="/upload-file" method="POST" enctype="multipart/form-data" class="mt-6">
+            <label
+              for="dropzone-file"
+              class="flex flex-col items-center justify-center w-full h-60 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition"
+            >
+              <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg class="w-10 h-10 mb-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12v9m0 0l-3-3m3 3l3-3M16 4h2a2 2 0 012 2v6m-6-6h-2a2 2 0 00-2 2v4" />
+                </svg>
+                <p class="text-sm font-semibold">Click to upload or drag & drop</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Any file up to 5MB</p>
+              </div>
+              <input id="dropzone-file" type="file" name="file" class="hidden" />
+            </label>
+            <button type="submit" class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-xl transition">
+              <i class="ri-check-line mr-2"></i> Upload File
+            </button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      function showPopUp() {
+        document.querySelector('.pop').classList.remove('hidden');
+      }
+      function hidePopUp() {
+        document.querySelector('.pop').classList.add('hidden');
+      }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <style>
+      @keyframes fade-in-up {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in-up {
+        animation: fade-in-up 0.4s ease-out;
+      }
+    </style>
+  </body>
+</html>
