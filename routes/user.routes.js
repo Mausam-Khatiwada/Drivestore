@@ -34,7 +34,8 @@ if (!errors.isEmpty()) {
         password: hashedPassword
         
     })
-    res.json(newUser)
+    res.redirect('/user/login');
+    // console.log("User registered successfully:", newUser);
 })
 
 router.get('/login', (req, res) => {
@@ -77,10 +78,17 @@ router.post('/login',
     )
     res.cookie('token',token)
 
-    res.send('Logged in successfully');
+    res.redirect('/home')
 
     }
   
 )
+
+// Route to logout user
+
+router.get('/logout', (req,res)=>{
+    res.clearCookie('token');
+    res.redirect('/user/login');
+})
 
 module.exports = router;

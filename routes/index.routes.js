@@ -3,10 +3,35 @@ const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
 const File = require('../models/file.model');
+const jwt = require('jsonwebtoken')
 const isAuthenticated = require('../middlewares/auth.middleware');
 const user = require('../models/user.model');
 
 const router = express.Router();
+
+
+// Route to render the index page
+
+router.get('/',(req, res)=>{
+
+    const token = req.cookies.token;
+    if(token){
+        try {
+            jwt.verify(token, process.env.JWT_SECRET)
+            console.log("User is authenticated");
+            return res.redirect('/home');
+
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+        console.log("User is not authenticated, redirecting to login");
+    return res.redirect('/user/login');
+
+            
+})
+
 
 //User home route
 
@@ -51,7 +76,7 @@ router.post('/upload-file', isAuthenticated, upload.single('file'), async (req, 
         })
         await file.save();
         res.redirect('/home')
-        console.log("File uploaded successfully", file);
+        // console.log("File uploaded successfully", file);
     }
     catch (err) {
         console.error(err);
@@ -77,7 +102,7 @@ router.post('/delete-file/:id', isAuthenticated, async (req, res) => {
 
         // Delete the file record from the database
         await File.findByIdAndDelete(file._id);
-        console.log("File deleted successfully");
+        // console.log("File deleted successfully");
         res.redirect('/home');
         })
     }
