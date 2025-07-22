@@ -202,6 +202,27 @@
         </div>
       </div>
     </div>
+    <% if (query && query.login === 'success') { %>
+  <div id="toast" class="fixed bottom-4 right-4 bg-black text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-500">
+    ✅ Login successful! Welcome back.
+  </div>
+
+  <script>
+    // Auto-dismiss toast
+    setTimeout(() => {
+      const toast = document.getElementById('toast');
+      if (toast) toast.style.opacity = '0';
+    }, 3000);
+
+    // Remove login param from URL
+    setTimeout(() => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('login');
+      window.history.replaceState({}, document.title, url.pathname);
+    }, 1000);
+  </script>
+<% } %>
+
 
     <script>
       // Show/hide upload modal

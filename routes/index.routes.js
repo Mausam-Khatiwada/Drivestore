@@ -38,7 +38,7 @@ router.get('/',(req, res)=>{
 router.get('/home', isAuthenticated, async (req, res) => {
     try {
         const files = await File.find({ userId: req.user.userId }).sort({ uploadDate: -1 });
-        res.render('home', { files, user: req.user });
+        res.render('home', { files, user: req.user, query: req.query });
     }
     catch (err) {
         console.error(err);

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { body, validationResult } = require('express-validator');
+const { body, validationResult, query } = require('express-validator');
 const userModel = require('../models/user.model');
 const user = require('../models/user.model');
 const bcrypt = require('bcrypt');
@@ -34,12 +34,12 @@ if (!errors.isEmpty()) {
         password: hashedPassword
         
     })
-    res.redirect('/user/login');
+    res.redirect('/user/login?registered=success');
     // console.log("User registered successfully:", newUser);
 })
 
 router.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login', {query: req.query });
 })
 router.post('/login',
     body('username').trim().isLength({ min: 3 }),
@@ -78,7 +78,7 @@ router.post('/login',
     )
     res.cookie('token',token)
 
-    res.redirect('/home')
+    res.redirect('/home?login=success');
 
     }
   
